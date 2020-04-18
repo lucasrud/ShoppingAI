@@ -31,8 +31,7 @@ def main():
 
 
 def load_data(filename):
-    """ TODO: load data from CSV and convert into a list of evidence lists and list of labels.
-    """
+
     # Reading data in from csv file
     with open(filename) as f:
         reader = csv.reader(f)
@@ -41,13 +40,15 @@ def load_data(filename):
         data = []
         for row in reader:
             data.append({
-                "evidence": [int(cell) for cell in (row[0], float(cell)) for cell in (row[1], int(cell))
-                             for cell in (row[2], float(cell)) for cell in (row[3], int(cell)) for cell in (row[4],
-                                                                                                            float(cell)) for
-                             cell in (row[5::9], int(cell)) for cell in (row[9::16])
-                             ],
+                "evidence": [[int(cell) for cell in row[0]], [str(cell) for cell in row[1]],
+                             [int(cell) for cell in row[2]], [str(cell) for cell in row[3]],
+                             [int(cell) for cell in row[4]], [float(cell) for cell in row[5::9]],
+                             [str(cell) for cell in row[9]], [str(cell) for cell in row[10]],
+                             [int(cell) for cell in row[11::16]]],
                 "label": "Purchase" if row[16] == "1" else "No Purchase"
             })
+
+        return data[0], data[1]
 
 
 def train_model(evidence, labels):
