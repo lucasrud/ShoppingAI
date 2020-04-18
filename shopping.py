@@ -33,20 +33,21 @@ def main():
 def load_data(filename):
     """ TODO: load data from CSV and convert into a list of evidence lists and list of labels.
     """
+    # Reading data in from csv file
     with open(filename) as f:
         reader = csv.reader(f)
         next(reader)
 
-    data = []
-    for row in reader:
-        data.append({
-            "evidence": [int(cell) for cell in (row[0], float(cell)) for cell in (row[1], int(cell))
-                         for cell in (row[2], float(cell)) for cell in (row[3], int(cell)) for cell in (row[4],
-                         float(cell)) for cell in (row[5::9], int(cell)) for cell in (row[9::16])
-                         ],
-            "label": "Purchase" if row[16] == "1" else "No Purchase"
-        })
-    raise NotImplementedError
+        data = []
+        for row in reader:
+            data.append({
+                "evidence": [int(cell) for cell in (row[0], float(cell)) for cell in (row[1], int(cell))
+                             for cell in (row[2], float(cell)) for cell in (row[3], int(cell)) for cell in (row[4],
+                                                                                                            float(cell)) for
+                             cell in (row[5::9], int(cell)) for cell in (row[9::16])
+                             ],
+                "label": "Purchase" if row[16] == "1" else "No Purchase"
+            })
 
 
 def train_model(evidence, labels):
@@ -54,7 +55,13 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier(n_neighbors=1)
+    X_training = [row["evidence"] for row in evidence]
+    y_training = [row["label"] for row in labels]
+
+    model.fit(X_training, y_training)
+
+    return model
 
 
 def evaluate(labels, predictions):
@@ -62,7 +69,20 @@ def evaluate(labels, predictions):
     Given a list of actual labels and a list of predicted labels,
     return a tuple (sensitivity, specificty).
     """
-    raise NotImplementedError
+    correct = 0
+    incorrect = 0
+    total = 0
+
+    for actual, predicted in zip(labels, predictions):
+        total += 1
+        if actual == predicted:
+            correct += 1
+        else:
+            incorrect += 1
+
+    sensitivity = float(correct / total)
+    specificity = float(incorrect / total)
+    return sensitivity, specificity
 
 
 if __name__ == "__main__":
